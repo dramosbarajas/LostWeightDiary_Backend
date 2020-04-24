@@ -19,7 +19,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'token_verified', 'email_verified_at'
+        'name', 'email', 'password', 'tokenVerified', 'email_verified_at', 'age'
     ];
 
     /**
@@ -45,7 +45,7 @@ class User extends Authenticatable
      * 
      */
 
-    public function generateToken()
+    public static function generateToken()
     {
         return str_random(64);
     }
