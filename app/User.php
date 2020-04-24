@@ -3,20 +3,23 @@
 namespace App;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use Notifiable;
+    use Notifiable, SoftDeletes;
 
+    const USUARIO_VERIFICADO = true;
+    const USUARIO_NO_VERIFICADO = false;
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'token_verified', 'email_verified_at'
     ];
 
     /**
@@ -25,7 +28,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'tokenVerified',
     ];
 
     /**
@@ -36,4 +39,50 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Funcion para generar el token 
+     * 
+     */
+
+    public function generateToken()
+    {
+        return str_random(64);
+    }
+
+    /**
+     * Utilizamos los mutators de Laravel para el atributo name pasarlo siempre a minusculas
+     * 
+     */
+    public function setNameAttribute($valor)
+    {
+        $this->attributes['name'] = strtolower($valor);
+    }
+
+    /**
+     * Utilizamos los mutators para cuando recuperemos el nombre lo pintemos con la primera letra en mayuscula. 
+     * 
+     */
+    public function getNameAttribute($valor)
+    {
+        return ucwords($valor);
+    }
+
+    /**
+     * Utilizamos los mutators para almacenar el email siempre en minusculas.
+     * 
+     */
+    public function setEmailAttribute($valor)
+    {
+        $this->attributes['email'] = strtolower($valor);
+    }
+
+    /**
+     * Retornamos si un usuario ha verificado su cuenta.
+     * 
+     */
+    public function esVerificado()
+    {
+        return $this->email_verified_at !=  null;
+    }
 }
