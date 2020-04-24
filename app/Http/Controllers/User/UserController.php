@@ -5,17 +5,21 @@ namespace App\Http\Controllers\User;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\ApiController;
 
 class UserController extends ApiController
 {
-    /***
-     * 
-     * 
-     */
 
-    public function register(request $request)
+
+    /**
+     * register
+     * Logica para el registro de un usuario
+     * @param  mixed $request
+     * @return void
+     */
+    public function register(Request $request)
     {
         //TODO 
         // cambiar el tamaño para pro de password
@@ -37,13 +41,21 @@ class UserController extends ApiController
         $usuario = User::create($campos);
         return $this->showOne($usuario, 201);
     }
-    /***
-     * 
-     * 
-     */
-    public function login()
+
+    public function login(Request $request)
     {
-        return $this->successResponse("hola", 200);
+        $credentials = $request->only('email', 'password');
+        $credentials = [
+            'email' => $request->email,
+            'password' => $request->password,
+            'isVerified' => true,
+            'deleted_at' => null
+        ];
+        if (Auth::attempt($credentials)) {
+            return $this->errorResponse("Autenticación correcta", 200);
+        }
+
+        return $this->errorResponse("Se ha producido un error en la autenticación", 500);
     }
     /***
      * 

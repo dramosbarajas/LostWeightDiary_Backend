@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->integer('age')->unsigned();
             $table->string('tokenVerified', 64)->nullable();
             $table->timestamp('email_verified_at')->nullable()->default(null);
+            $table->boolean('isVerified')->default(false);
             $table->string('password');
             $table->timestamps();
             $table->softDeletes();

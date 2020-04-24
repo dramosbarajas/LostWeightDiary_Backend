@@ -77,9 +77,11 @@ class User extends Authenticatable
         $this->attributes['email'] = strtolower($valor);
     }
 
+
     /**
-     * Retornamos si un usuario ha verificado su cuenta.
-     * 
+     * esVerificado
+     * Comprueba si un usuario ha verificado su cuenta
+     * @return void
      */
     public function esVerificado()
     {
