@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -48,14 +49,30 @@ class UserController extends ApiController
         $credentials = [
             'email' => $request->email,
             'password' => $request->password,
-            'isVerified' => true,
             'deleted_at' => null
         ];
         if (Auth::attempt($credentials)) {
-            return $this->errorResponse("Autenticación correcta", 200);
-        }
+            //Comprobamos si el usuario ya fue verificado.
+            if (!Auth::user()->isVerified) {
+                //TODO 
+                //Reenviamos el correo de la verificación.
 
-        return $this->errorResponse("Se ha producido un error en la autenticación", 500);
+                return $this->errorResponse("Autenticación correcta", 200);
+            }
+
+            //Generar el token
+            $user = $request->user();
+            $tokenResult = $user->createToken('Personal Access Token');
+            $token = $tokenResult->token;
+            $token->save();
+            return $this->successResponse([
+                'access_token' => $tokenResult->accessToken,
+                'token_type' => 'Bearer',
+                'expires_at' => Carbon::parse(
+                    $tokenResult->token->expires_at
+                )->toDateTimeString()
+            ], 200);
+        }
     }
     /***
      * 
