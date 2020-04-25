@@ -21,6 +21,7 @@ Route::post('forgot', 'User\UserController@forgotPassword');
 Route::post('recover', 'User\UserController@recoverPassword');
 Route::name('verify')->get('verify/{token}', 'User\UserController@verifyToken');
 
+Route::get('logout', 'User\UserController@logout')->middleware('auth:api');
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });

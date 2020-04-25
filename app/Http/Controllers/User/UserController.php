@@ -56,12 +56,13 @@ class UserController extends ApiController
             'deleted_at' => null
         ];
         if (Auth::attempt($credentials)) {
-            //Comprobamos si el usuario ya fue verificado.
+            //Comprobamos si el usuario no ha sido verificado, enviamos nuevamente el correo.
             if (!Auth::user()->isVerified) {
-                //TODO 
-                //Reenviamos el correo de la verificación.
-
-                return $this->errorResponse("Autenticación correcta", 200);
+                $usuario = Auth::user();
+                $usuario->verification_token = User::generateToken();
+                $usuario->save();
+                event(new UserRegistered($usuario));
+                return $this->errorResponse("Parece que no has confirmado tu registro, te hemos enviado nuevamente un correo electrónico.", 200);
             }
 
             //Generar el token
@@ -92,6 +93,12 @@ class UserController extends ApiController
     {
     }
 
+    /**
+     * verifyToken
+     *
+     * @param  mixed $token
+     * @return void
+     */
     public function verifyToken($token)
     {
         $user = User::where('verification_token', $token)->firstOrFail();
@@ -100,5 +107,17 @@ class UserController extends ApiController
         $user->email_verified_at = Carbon::now();
         $user->save();
         return $this->showMessage('La cuenta ha sido verificada');
+    }
+
+    /**
+     * logout
+     *
+     * @return void
+     */
+    public function logout()
+    {
+        $user = Auth::user()->token();
+        $user->revoke();
+        return $this->showMessage('Usuario desconectado correctamente.');
     }
 }
