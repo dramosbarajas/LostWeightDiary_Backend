@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Events\UserRegistered;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -36,10 +37,13 @@ class UserController extends ApiController
 
         $campos = $request->all();
         $campos['password'] = Hash::make($campos['password']); // Hash de la contraseña
-        $campos['verified'] = User::USUARIO_NO_VERIFICADO;
-        $campos['tokenVerified'] = User::generateToken(); //Generamos el token de verificación
+        $campos['isVerified'] = User::USUARIO_NO_VERIFICADO;
+        $campos['verification_token'] = User::generateToken(); //Generamos el token de verificación
 
         $usuario = User::create($campos);
+
+        event(new UserRegistered($usuario));
+
         return $this->showOne($usuario, 201);
     }
 
@@ -68,9 +72,7 @@ class UserController extends ApiController
             return $this->successResponse([
                 'access_token' => $tokenResult->accessToken,
                 'token_type' => 'Bearer',
-                'expires_at' => Carbon::parse(
-                    $tokenResult->token->expires_at
-                )->toDateTimeString()
+                'User' => $user->name
             ], 200);
         }
     }
@@ -88,5 +90,15 @@ class UserController extends ApiController
      */
     public function recoverPasword()
     {
+    }
+
+    public function verifyToken($token)
+    {
+        $user = User::where('verification_token', $token)->firstOrFail();
+        $user->isVerified = User::USUARIO_VERIFICADO;
+        $user->verification_token = null;
+        $user->email_verified_at = Carbon::now();
+        $user->save();
+        return $this->showMessage('La cuenta ha sido verificada');
     }
 }
