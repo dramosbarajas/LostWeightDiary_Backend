@@ -100,9 +100,30 @@ class UserController extends ApiController
      * 
      * 
      */
-    public function recoverPassword($key)
+    public function recoverPassword(Request $request)
     {
-        dd($key);
+        $reglas = [
+            'key' => 'required',
+            'old_password' => 'required',
+            'password' => 'required|min:6|confirmed',
+        ];
+
+        $this->validate($request, $reglas);
+        $filaCambioClave = PassRecover::where('token_pass', $request->key)->first();
+        $usuario = User::find($filaCambioClave->user_id);
+        if (!Hash::check($request->old_password, $usuario->password)) {
+            return $this->errorResponse("La contraseña antigua no es correcta", 401);
+        } else {
+            if ($request->old_password == $request->password) {
+                return $this->errorResponse("La contraseña ya ha sido utilizada", 401);
+            }
+            $usuario->password = Hash::make($request->password);
+            $filaCambioClave->changed_on = Carbon::now();
+            $filaCambioClave->token_pass = null;
+            $filaCambioClave->save();
+            $usuario->save();
+            return $this->successResponse("Cambio de contraseña realizado", 200);
+        }
     }
 
     /**
