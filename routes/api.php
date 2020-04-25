@@ -17,8 +17,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('login', 'User\UserController@login');
 Route::post('register', 'User\UserController@register');
-Route::post('forgot', 'User\UserController@forgotPassword');
-Route::post('recover', 'User\UserController@recoverPassword');
+Route::get('forgot/{correo}', 'User\UserController@forgotPassword');
+Route::get('recover/{key}', 'User\UserController@recoverPassword')->name('recover');
 Route::name('verify')->get('verify/{token}', 'User\UserController@verifyToken');
 
 Route::get('logout', 'User\UserController@logout')->middleware('auth:api');

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Events\recoverPassword;
 use App\User;
 use Carbon\Carbon;
+use App\PassRecover;
 use Illuminate\Http\Request;
 use App\Events\UserRegistered;
 use App\Http\Controllers\Controller;
@@ -81,16 +83,26 @@ class UserController extends ApiController
      * 
      * 
      */
-    public function forgotPasword()
+    public function forgotPassword($correo)
     {
+        $usuario = User::where('email', $correo)->firstOrFail();
+        $passRecover = new PassRecover();
+        $passRecover->user_id = $usuario->id;
+        $passRecover->token_pass = str_random(100);
+        $passRecover->save();
+        $evento = ['email' => $usuario->email, 'name' => $usuario->name, $passRecover->token_password];
+        //Lanzamos el evento con el token para cambiar la contraseña 
+        event(new recoverPassword($usuario, $passRecover));
+        return $this->successResponse("Te hemos enviado un correo electrónico para recuperar tu cuenta.", 200);
     }
 
     /***
      * 
      * 
      */
-    public function recoverPasword()
+    public function recoverPassword($key)
     {
+        dd($key);
     }
 
     /**

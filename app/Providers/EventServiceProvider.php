@@ -18,6 +18,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\UserRegistered' => [
             'App\Listeners\ListenerUserRegistered',
         ],
+        'App\Events\recoverPassword' => [
+            'App\Listeners\ListenerRecoverPassword',
+        ],
     ];
 
     /**
