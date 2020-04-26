@@ -27,3 +27,10 @@ Route::get('verify/{token}', 'User\UserController@verifyToken')->name('verify');
 
 Route::middleware('auth:api')->get('logout', 'User\UserController@logout')->name('logout');
 Route::middleware('auth:api')->post('change', 'User\UserController@changePassword')->name('change');
+Route::middleware('auth:api')->post('user', 'User\UserController@getUserDetails')->name('userDetails');
+
+/***************************************
+ * * Rutas de medidas
+ **************************************/
+
+Route::middleware('auth:api')->apiResource('measure', 'UserMeasures\MeasureController');

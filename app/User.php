@@ -88,4 +88,14 @@ class User extends Authenticatable
     {
         return $this->email_verified_at !=  null;
     }
+
+    /**
+     * measures
+     *
+     * @return void
+     */
+    public function measures()
+    {
+        return $this->hasMany('App\Measure');
+    }
 }

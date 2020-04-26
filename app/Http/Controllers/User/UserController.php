@@ -229,6 +229,13 @@ class UserController extends ApiController
         }
     }
 
+    public function getUserDetails()
+    {
+
+        $usuario = User::where('id', Auth::id())->with('measures')->get();
+        return $this->showAll($usuario, 200);
+    }
+
     /**
      * revokeAllTokensUser
      * Revoca todos los tokens de un determinado usuario
