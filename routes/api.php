@@ -15,13 +15,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('login', 'User\UserController@login');
-Route::post('register', 'User\UserController@register');
-Route::get('forgot/{correo}', 'User\UserController@forgotPassword');
-Route::post('recover', 'User\UserController@recoverPassword')->name('recover');
-Route::name('verify')->get('verify/{token}', 'User\UserController@verifyToken');
+/***************************************
+ * * Rutas de usuario
+ **************************************/
 
-Route::get('logout', 'User\UserController@logout')->middleware('auth:api');
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::post('login', 'User\UserController@login')->name('login');
+Route::post('register', 'User\UserController@register')->name('register');
+Route::get('forgot/{correo}', 'User\UserController@forgotPassword')->name('forgot');
+Route::post('recover', 'User\UserController@recoverPassword')->name('recover');
+Route::get('verify/{token}', 'User\UserController@verifyToken')->name('verify');
+
+Route::middleware('auth:api')->get('logout', 'User\UserController@logout')->name('logout');
+Route::middleware('auth:api')->post('change', 'User\UserController@changePassword')->name('change');
