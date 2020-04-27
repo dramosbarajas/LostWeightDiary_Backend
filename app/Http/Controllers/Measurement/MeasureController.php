@@ -29,7 +29,24 @@ class MeasureController extends ApiController
      */
     public function store(Request $request)
     {
-        //
+        $reglas = [
+            'peso' => 'required|numeric|between:0,199.9',
+            'estatura' => 'required|numeric|between:0,230.9',
+            'cadera' => 'required|numeric|between:0,230.9',
+            'cintura' => 'required|numeric|between:0,230.9',
+            'pecho' => 'required|numeric|between:0,230.9',
+            'brazo' => 'required|numeric|between:0,230.9',
+            'pierna' => 'required|numeric|between:0,230.9',
+            'cuello' => 'required|numeric|between:0,230.9',
+        ];
+
+        //Validamos los datos del request 
+        $this->validate($request, $reglas);
+
+        $campos = $request->all();
+        $campos['user_id'] = Auth::id();
+        $newMeasure = Measure::create($campos);
+        return $this->showOne($newMeasure);
     }
 
     /**
@@ -42,7 +59,6 @@ class MeasureController extends ApiController
     {
         // TODO 
         // Policies
-
         return $this->ShowOne($measure);
     }
 
@@ -66,6 +82,8 @@ class MeasureController extends ApiController
      */
     public function destroy($measure)
     {
-        //
+        // TODO policy
+        $measure->delete();
+        return $this->successResponse("Registro eliminado correctamente", 200);
     }
 }
