@@ -33,4 +33,4 @@ Route::middleware('auth:api')->post('user', 'User\UserController@getUserDetails'
  * * Rutas de medidas
  **************************************/
 
-Route::middleware('auth:api')->apiResource('measure', 'UserMeasures\MeasureController');
+Route::middleware('auth:api')->apiResource('measure', 'Measurement\MeasureController');

@@ -1,10 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Measurement;
 
+use App\Http\Controllers\ApiController;
+use App\Measure;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
-class MeasureController extends Controller
+class MeasureController extends ApiController
 {
     /**
      * Display a listing of the resource.
@@ -13,7 +17,8 @@ class MeasureController extends Controller
      */
     public function index()
     {
-        //
+        $measures = Measure::where('user_id', Auth::id())->get();
+        return $this->showAll($measures);
     }
 
     /**
@@ -33,9 +38,12 @@ class MeasureController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Measure $measure)
     {
-        //
+        // TODO 
+        // Policies
+
+        return $this->ShowOne($measure);
     }
 
     /**
@@ -45,7 +53,7 @@ class MeasureController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $measure)
     {
         //
     }
@@ -56,7 +64,7 @@ class MeasureController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($measure)
     {
         //
     }
