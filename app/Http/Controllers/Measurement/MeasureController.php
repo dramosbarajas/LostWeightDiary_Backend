@@ -69,9 +69,14 @@ class MeasureController extends ApiController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $measure)
+    public function update(Request $request, Measure $measure)
     {
-        //
+        $measure->fill($request->all());
+        if ($measure->isDirty()) {
+            //ACTUALIZACION
+        } else {
+            return $this->errorResponse("No se ha modificado ningún atributo", 401);
+        }
     }
 
     /**
