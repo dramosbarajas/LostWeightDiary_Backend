@@ -43,9 +43,9 @@ class MeasureController extends ApiController
         //Validamos los datos del request 
         $this->validate($request, $reglas);
 
-        $campos = $request->all();
-        $campos['user_id'] = Auth::id();
-        $newMeasure = Measure::create($campos);
+        $fields = $request->all();
+        $fields['user_id'] = Auth::id();
+        $newMeasure = Measure::create($fields);
         return $this->showOne($newMeasure);
     }
 
@@ -71,9 +71,10 @@ class MeasureController extends ApiController
      */
     public function update(Request $request, Measure $measure)
     {
-        $measure->fill($request->all());
+        $measure->fill($request->only(['peso', 'estatura', 'cintura', 'cadera', 'pecho', 'brazo', 'pierna', 'cuello']));
         if ($measure->isDirty()) {
-            //ACTUALIZACION
+            $measure->save();
+            return $this->successResponse("Registro actualizado", 201);
         } else {
             return $this->errorResponse("No se ha modificado ningún atributo", 401);
         }
