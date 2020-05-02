@@ -87,7 +87,7 @@ class UserController extends ApiController
             }
 
             //Generamos el token de acceso 
-            $user = $request->user();
+            $user = Auth::user();
             $tokenResult = $user->createToken('Personal Access Token');
             $token = $tokenResult->token;
             $token->save();
@@ -189,7 +189,7 @@ class UserController extends ApiController
     {
         $user = Auth::user()->token(); //Recuperamos el token del usuario activo
         $user->revoke(); //Revocamos
-        return $this->showMessage('Usuario desconectado correctamente.'); //Retornamos
+        return $this->showMessage('Usuario desconectado correctamente.', 204); //Retornamos
     }
 
     /**
