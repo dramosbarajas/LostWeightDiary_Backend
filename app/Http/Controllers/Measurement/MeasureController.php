@@ -71,7 +71,22 @@ class MeasureController extends ApiController
      */
     public function update(Request $request, Measure $measure)
     {
+        $reglas = [
+            'peso' => 'required|numeric|between:0,199.9',
+            'estatura' => 'required|numeric|between:0,230.9',
+            'cadera' => 'required|numeric|between:0,230.9',
+            'cintura' => 'required|numeric|between:0,230.9',
+            'pecho' => 'required|numeric|between:0,230.9',
+            'brazo' => 'required|numeric|between:0,230.9',
+            'pierna' => 'required|numeric|between:0,230.9',
+            'cuello' => 'required|numeric|between:0,230.9',
+        ];
+
+        //Validamos los datos del request 
+        $this->validate($request, $reglas);
+
         $measure->fill($request->only(['peso', 'estatura', 'cintura', 'cadera', 'pecho', 'brazo', 'pierna', 'cuello']));
+
         if ($measure->isDirty()) {
             $measure->save();
             return $this->successResponse("Registro actualizado", 201);

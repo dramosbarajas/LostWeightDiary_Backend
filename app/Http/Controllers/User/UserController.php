@@ -27,33 +27,29 @@ class UserController extends ApiController
      */
     public function register(Request $request)
     {
-        try {
-            //Reglas de validación
-            $reglas = [
-                'name' => 'required',
-                'email' => 'required|email|unique:users',
-                'password' => 'required|min:6|confirmed',
-                'age' => 'required|integer|min:10|max:99'
-            ];
 
-            //Validamos los datos del request 
-            $this->validate($request, $reglas);
+        //Reglas de validación
+        $reglas = [
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6|confirmed',
+            'age' => 'required|integer|min:10|max:99'
+        ];
 
-            //Recuperamos los campos de la petición y seteamos los valores.
-            $campos = $request->all();
-            $campos['password'] = Hash::make($campos['password']); // Hash de la contraseña
-            $campos['isVerified'] = User::USUARIO_NO_VERIFICADO;
-            $campos['verification_token'] = User::generateToken(); //Generamos el token de verificación
-            //Guardamos el nuevo usuario 
-            $usuario = User::create($campos);
-            //Lanzamos el evento con el token de verificación de la cuenta
-            event(new UserRegistered($usuario));
+        //Validamos los datos del request 
+        $this->validate($request, $reglas);
 
-            return $this->showOne($usuario, 201);
-        } catch (\Throwable $th) {
-            Log::warning('Se ha producido un error al crear un registro ' . $th);
-            return $this->errorResponse("Ha ocurrido un error inesperado, intentelo de nuevo mas tarde", 500);
-        }
+        //Recuperamos los campos de la petición y seteamos los valores.
+        $campos = $request->all();
+        $campos['password'] = Hash::make($campos['password']); // Hash de la contraseña
+        $campos['isVerified'] = User::USUARIO_NO_VERIFICADO;
+        $campos['verification_token'] = User::generateToken(); //Generamos el token de verificación
+        //Guardamos el nuevo usuario 
+        $usuario = User::create($campos);
+        //Lanzamos el evento con el token de verificación de la cuenta
+        event(new UserRegistered($usuario));
+
+        return $this->showOne($usuario, 201);
     }
 
     /**
